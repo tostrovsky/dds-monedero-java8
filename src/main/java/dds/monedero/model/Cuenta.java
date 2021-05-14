@@ -25,12 +25,18 @@ public class Cuenta {
 
   public void poner(double cuanto) {
     this.repo.getValidador().validarMontoDeposito(cuanto, this.repo);
-    new Movimiento(LocalDate.now(), new BigDecimal(cuanto), true).agregateA(this);
+    BigDecimal monto =  new BigDecimal(cuanto);
+    Deposito deposito = new Deposito(LocalDate.now(), monto);
+    modificarSaldo(deposito);
+    this.repo.agregarMovimiento(deposito);
   }
 
   public void sacar(double cuanto) {
     this.repo.getValidador().validarMontoExtraccion(cuanto, this.repo, getSaldo());
-    new Movimiento(LocalDate.now(), new BigDecimal(cuanto), false).agregateA(this);
+    BigDecimal monto =  new BigDecimal(cuanto);
+    Extraccion extraccion = new Extraccion(LocalDate.now(), monto);
+    modificarSaldo(extraccion);
+    this.repo.agregarMovimiento(extraccion);
   }
 
   public RepositorioMovimientos getRepositorioMovimientos(){
@@ -41,8 +47,8 @@ public class Cuenta {
     return saldo;
   }
 
-  public void setSaldo(BigDecimal saldo) {
-    this.saldo = saldo;
+  public void modificarSaldo(Movimiento unMovimiento) {
+    this.saldo = unMovimiento.modificarSaldo(saldo);
   }
 
 }
