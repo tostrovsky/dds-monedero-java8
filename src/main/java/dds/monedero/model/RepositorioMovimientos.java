@@ -7,6 +7,7 @@ import java.util.List;
 
 public class RepositorioMovimientos {
   private List<Movimiento> movimientos = new ArrayList<>();
+  private final ValidadorMovimientos validador = new ValidadorMovimientos();
 
   public void agregarMovimiento(LocalDate fecha, BigDecimal cuanto, boolean esDeposito) {
     Movimiento movimiento = new Movimiento(fecha, cuanto, esDeposito);
@@ -22,6 +23,10 @@ public class RepositorioMovimientos {
 
   public List<Movimiento> getMovimientos() {
     return movimientos;
+  }
+
+  public ValidadorMovimientos getValidador() {
+    return validador;
   }
 
   public void setMovimientos(List<Movimiento> movimientos) {
