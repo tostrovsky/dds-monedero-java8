@@ -24,32 +24,45 @@ public class Cuenta {
   }
 
   public void poner(double cuanto) {
-    if (cuanto <= 0) {
-      throw new MontoNegativoException(cuanto + ": el monto a ingresar debe ser un valor positivo");
-    }
-
-    if (repo.getMovimientos().stream().filter(Movimiento::isDeposito).count() >= 3) {
-      throw new MaximaCantidadDepositosException("Ya excedio los " + 3 + " depositos diarios");
-    }
+    validarQueMontoSeaPositivo(cuanto);
+    validarQueNoExedaDepositosDiarios();
 
     new Movimiento(LocalDate.now(), new BigDecimal(cuanto), true).agregateA(this);
   }
 
   public void sacar(double cuanto) {
-    if (cuanto <= 0) {
-      throw new MontoNegativoException(cuanto + ": el monto a ingresar debe ser un valor positivo");
-    }
+    validarQueMontoSeaPositivo(cuanto);
+    validarQueExtraccionNoExedaSaldo(cuanto);
+    validarQueExtraccionNoExedaLimite(cuanto);
+
+    new Movimiento(LocalDate.now(), new BigDecimal(cuanto), false).agregateA(this);
+  }
+
+  public void validarQueMontoSeaPositivo(double cuanto){
+    if(cuanto <= 0) throw new MontoNegativoException(cuanto + ": el monto a ingresar debe ser un valor positivo");
+  }
+
+  public void validarQueNoExedaDepositosDiarios() {
+    int cantidadLimite = 3;
+    if (repo.getMovimientos().stream().filter(Movimiento::isDeposito).count() >= cantidadLimite)
+      throw new MaximaCantidadDepositosException("Ya excedio los " + cantidadLimite + " depositos diarios");
+  }
+
+  public void validarQueExtraccionNoExedaSaldo(double cuanto){
     if (getSaldo().doubleValue() - cuanto < 0) {
       throw new SaldoMenorException("No puede sacar mas de " + getSaldo() + " $");
     }
+  }
+
+  public void validarQueExtraccionNoExedaLimite(double cuanto){
     double montoExtraidoHoy = repo.getMontoExtraidoA(LocalDate.now());
     double limite = 1000 - montoExtraidoHoy;
     if (cuanto > limite) {
       throw new MaximoExtraccionDiarioException("No puede extraer mas de $ " + 1000
           + " diarios, límite: " + limite);
     }
-    new Movimiento(LocalDate.now(), new BigDecimal(cuanto), false).agregateA(this);
   }
+
   public RepositorioMovimientos getRepositorioMovimientos(){
     return this.repo;
   }
