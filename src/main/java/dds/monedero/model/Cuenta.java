@@ -47,6 +47,10 @@ public class Cuenta {
     return saldo;
   }
 
+  public void setSaldo(BigDecimal saldo) {
+    this.saldo = saldo;
+  }
+
   public void modificarSaldo(Movimiento unMovimiento) {
     this.saldo = unMovimiento.modificarSaldo(saldo);
   }

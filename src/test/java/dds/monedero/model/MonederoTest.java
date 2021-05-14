@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MonederoTest {
@@ -20,24 +21,37 @@ public class MonederoTest {
   }
 
   @Test
-  void Poner() {
+  void Poner1500DejaUnaCuentaNuevaCon1500() {
+
     cuenta.poner(1500);
+    assertEquals(cuenta.getSaldo(),  new BigDecimal(1500));
   }
 
   @Test
-  void PonerMontoNegativo() {
+  void Extraer500DejaUnaCuentaDe4500Con4000() {
+
+    cuenta.setSaldo(new BigDecimal(4500));
+    cuenta.sacar(500);
+    assertEquals(cuenta.getSaldo(),  new BigDecimal(4000));
+  }
+
+  @Test
+  void PonerMontoNegativoLanzaExcepcion() {
+
     assertThrows(MontoNegativoException.class, () -> cuenta.poner(-1500));
   }
 
   @Test
-  void TresDepositos() {
+  void PonerTresDepositosSeAcumulanEnElSaldoDeLaCuenta() {
     cuenta.poner(1500);
     cuenta.poner(456);
     cuenta.poner(1900);
+    double total = 1500 + 456 + 1900;
+    assertEquals(cuenta.getSaldo(), new BigDecimal(total));
   }
 
   @Test
-  void MasDeTresDepositos() {
+  void HacerMasDeTresDepositosLanzaExcepcion() {
     assertThrows(MaximaCantidadDepositosException.class, () -> {
           cuenta.poner(1500);
           cuenta.poner(456);
@@ -47,7 +61,7 @@ public class MonederoTest {
   }
 
   @Test
-  void ExtraerMasQueElSaldo() {
+  void ExtraerMasQueElSaldoLanzaExcepcion() {
     assertThrows(SaldoMenorException.class, () -> {
           cuenta.setSaldo(new BigDecimal(90));
           cuenta.sacar(1001);
@@ -55,7 +69,7 @@ public class MonederoTest {
   }
 
   @Test
-  public void ExtraerMasDe1000() {
+  public void ExtraerMasDe1000LanzaExcepcion() {
     assertThrows(MaximoExtraccionDiarioException.class, () -> {
       cuenta.setSaldo(new BigDecimal(5000));
       cuenta.sacar(1001);
@@ -63,7 +77,7 @@ public class MonederoTest {
   }
 
   @Test
-  public void ExtraerMontoNegativo() {
+  public void ExtraerMontoNegativoLanzaExcepcion() {
     assertThrows(MontoNegativoException.class, () -> cuenta.sacar(-500));
   }
 
