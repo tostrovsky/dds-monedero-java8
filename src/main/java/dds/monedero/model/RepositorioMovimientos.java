@@ -15,7 +15,7 @@ public class RepositorioMovimientos {
 
   public double getMontoExtraidoA(LocalDate fecha) {
     return getMovimientos().stream()
-        .filter(movimiento -> !movimiento.isDeposito() && movimiento.getFecha().equals(fecha))
+        .filter(mov -> mov instanceof Extraccion && mov.getFecha().equals(fecha))
         .mapToDouble(movimiento -> movimiento.getMonto().doubleValue())
         .sum();
   }

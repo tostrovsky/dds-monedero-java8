@@ -28,7 +28,7 @@ public class ValidadorMovimientos {
 
   public ValidadorMovimientos validarQueNoExedaDepositosDiarios(RepositorioMovimientos repo) {
     int cantidadLimite = 3;
-    if (repo.getMovimientos().stream().filter(Movimiento::isDeposito).count() >= cantidadLimite)
+    if (repo.getMovimientos().stream().filter(mov -> mov instanceof Deposito).count() >= cantidadLimite)
       throw new MaximaCantidadDepositosException("Ya excedio los " + cantidadLimite + " depositos diarios");
       return this;
   }
